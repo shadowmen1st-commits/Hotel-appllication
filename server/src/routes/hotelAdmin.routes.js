@@ -441,4 +441,129 @@ router.put('/profile', (req, res) => {
   });
 });
 
+// --- Banners API ---
+
+// GET /api/hotel-admin/banners
+router.get('/banners', (req, res) => {
+  const hotel = getAssignedHotel(req, res);
+  if (!hotel) return;
+
+  const banners = (db.data.banners || []).filter(b => b.hotel_id === hotel.id);
+  // Sort by sort_order ASC, then created_at DESC
+  banners.sort((a, b) => {
+    if (a.sort_order === b.sort_order) {
+      return new Date(b.created_at) - new Date(a.created_at);
+    }
+    return a.sort_order - b.sort_order;
+  });
+
+  res.json({ success: true, count: banners.length, banners });
+});
+
+// POST /api/hotel-admin/banners
+router.post('/banners', requireRole('hotel_admin'), (req, res) => {
+  const hotel = getAssignedHotel(req, res);
+  if (!hotel) return;
+
+  const { title, image_url, sort_order, is_active } = req.body;
+  if (!image_url) {
+    return res.status(400).json({ success: false, message: 'Image URL is required' });
+  }
+
+  const newBanner = {
+    id: `BNR-${Date.now()}`,
+    hotel_id: hotel.id,
+    title: title || '',
+    image_url,
+    sort_order: parseInt(sort_order) || 0,
+    is_active: is_active !== false, // default true
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+
+  db.transaction(data => {
+    if (!data.banners) data.banners = [];
+    data.banners.push(newBanner);
+  });
+
+  res.status(201).json({ success: true, message: 'Banner created', banner: newBanner });
+});
+
+// PUT /api/hotel-admin/banners/:id
+router.put('/banners/:id', requireRole('hotel_admin'), (req, res) => {
+  const hotel = getAssignedHotel(req, res);
+  if (!hotel) return;
+
+  const { id } = req.params;
+  const { title, image_url, sort_order, is_active } = req.body;
+
+  const updatedBanner = db.transaction(data => {
+    const banner = (data.banners || []).find(b => b.id === id && b.hotel_id === hotel.id);
+    if (!banner) return null;
+
+    if (title !== undefined) banner.title = title;
+    if (image_url) banner.image_url = image_url;
+    if (sort_order !== undefined) banner.sort_order = parseInt(sort_order);
+    if (is_active !== undefined) banner.is_active = is_active;
+    banner.updated_at = new Date().toISOString();
+
+    return banner;
+  });
+
+  if (!updatedBanner) {
+    return res.status(404).json({ success: false, message: 'Banner not found or unauthorized' });
+  }
+
+  res.json({ success: true, message: 'Banner updated', banner: updatedBanner });
+});
+
+// PATCH /api/hotel-admin/banners/:id/status
+router.patch('/banners/:id/status', requireRole('hotel_admin'), (req, res) => {
+  const hotel = getAssignedHotel(req, res);
+  if (!hotel) return;
+
+  const { id } = req.params;
+  const { is_active } = req.body;
+
+  const updatedBanner = db.transaction(data => {
+    const banner = (data.banners || []).find(b => b.id === id && b.hotel_id === hotel.id);
+    if (!banner) return null;
+
+    if (is_active !== undefined) banner.is_active = is_active;
+    banner.updated_at = new Date().toISOString();
+
+    return banner;
+  });
+
+  if (!updatedBanner) {
+    return res.status(404).json({ success: false, message: 'Banner not found or unauthorized' });
+  }
+
+  res.json({ success: true, message: 'Banner status updated', banner: updatedBanner });
+});
+
+// DELETE /api/hotel-admin/banners/:id
+router.delete('/banners/:id', requireRole('hotel_admin'), (req, res) => {
+  const hotel = getAssignedHotel(req, res);
+  if (!hotel) return;
+
+  const { id } = req.params;
+  let deleted = false;
+
+  db.transaction(data => {
+    if (!data.banners) data.banners = [];
+    const idx = data.banners.findIndex(b => b.id === id && b.hotel_id === hotel.id);
+    if (idx !== -1) {
+      data.banners.splice(idx, 1);
+      deleted = true;
+    }
+  });
+
+  if (!deleted) {
+    return res.status(404).json({ success: false, message: 'Banner not found or unauthorized' });
+  }
+
+  res.json({ success: true, message: 'Banner deleted successfully' });
+});
+
 export default router;

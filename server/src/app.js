@@ -17,6 +17,7 @@ import adminRoutes from './routes/admin.routes.js';
 import hotelAdminRoutes from './routes/hotelAdmin.routes.js';
 import pickupRoutes from './routes/pickup.routes.js';
 import customerRoutes from './routes/customer.routes.js';
+import bannerRoutes from './routes/banner.routes.js';
 
 const app = express();
 
@@ -68,6 +69,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api', pickupRoutes);
 app.use('/api', customerRoutes);
+app.use('/api/banners', bannerRoutes);
 
 // 404 Handler
 app.use((req, res) => {
