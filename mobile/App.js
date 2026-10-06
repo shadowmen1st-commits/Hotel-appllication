@@ -48,8 +48,10 @@ function MainTabNavigator() {
             style={[
               StyleSheet.absoluteFill,
               {
-                borderTopLeftRadius: 28,
-                borderTopRightRadius: 28,
+                borderTopLeftRadius: 18,
+                borderTopRightRadius: 18,
+                borderBottomLeftRadius: 22,
+                borderBottomRightRadius: 22,
                 overflow: 'hidden',
               }
             ]}
@@ -57,30 +59,33 @@ function MainTabNavigator() {
         ),
         tabBarStyle: {
           // Semi-transparent frosted glass surface
-          backgroundColor: 'rgba(245, 247, 250, 0.55)',
-          borderTopLeftRadius: 28,
-          borderTopRightRadius: 28,
+          backgroundColor: 'rgba(255, 255, 255, 0.90)',
+          borderTopLeftRadius: 18,
+          borderTopRightRadius: 18,
+          borderBottomLeftRadius: 22,
+          borderBottomRightRadius: 22,
           // Crisp white glass border
           borderTopWidth: 1,
-          borderTopColor: 'rgba(255, 255, 255, 0.80)',
+          borderTopColor: 'rgba(255, 255, 255, 1)',
           borderLeftWidth: 1,
-          borderLeftColor: 'rgba(255, 255, 255, 0.70)',
+          borderLeftColor: 'rgba(255, 255, 255, 1)',
           borderRightWidth: 1,
-          borderRightColor: 'rgba(255, 255, 255, 0.70)',
-          borderBottomWidth: 0,
+          borderRightColor: 'rgba(255, 255, 255, 1)',
+          borderBottomWidth: 1,
+          borderBottomColor: 'rgba(255, 255, 255, 1)',
           position: 'absolute',
-          bottom: Platform.OS === 'ios' ? 16 : 8,
-          left: 10,
-          right: 10,
+          bottom: Platform.OS === 'ios' ? 20 : 12, // Increased bottom margin slightly for safer area floating
+          left: 12,
+          right: 12,
           height: Platform.OS === 'ios' ? 74 : 64,
           paddingBottom: Platform.OS === 'ios' ? 14 : 4,
           paddingTop: 6,
-          // Soft shadow beneath the glass
-          elevation: 24,
-          shadowColor: '#0B1733',
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.14,
-          shadowRadius: 32,
+          // Premium subtle floating shadow
+          elevation: 12,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.1,
+          shadowRadius: 16,
           maxWidth: 720,
           alignSelf: 'center',
           overflow: 'hidden',
