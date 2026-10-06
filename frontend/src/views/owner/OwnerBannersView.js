@@ -106,27 +106,27 @@ export function renderOwnerBannersView(container) {
           const card = document.createElement('div');
           card.className = 'card';
           card.style.overflow = 'hidden';
-          card.innerHTML = \`
+          card.innerHTML = `
             <div style="height: 160px; background: #e2e8f0; position: relative;">
-              <img src="\${b.image_url}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/400x200?text=Invalid+Image'" />
-              \${!b.is_active ? '<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">INACTIVE</div>' : ''}
-              <div style="position: absolute; top: 8px; right: 8px; background: \${b.is_active ? '#10b981' : '#64748b'}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">
-                \${b.is_active ? 'ACTIVE' : 'INACTIVE'}
+              <img src="${b.image_url}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://via.placeholder.com/400x200?text=Invalid+Image'" />
+              ${!b.is_active ? '<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">INACTIVE</div>' : ''}
+              <div style="position: absolute; top: 8px; right: 8px; background: ${b.is_active ? '#10b981' : '#64748b'}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">
+                ${b.is_active ? 'ACTIVE' : 'INACTIVE'}
               </div>
             </div>
             <div style="padding: 16px;">
-              <h4 style="margin: 0 0 4px 0; font-size: 15px; color: #0f172a;">\${b.title || 'Untitled Banner'}</h4>
-              <p style="margin: 0 0 16px 0; font-size: 13px; color: #64748b;">Order: \${b.sort_order}</p>
+              <h4 style="margin: 0 0 4px 0; font-size: 15px; color: #0f172a;">${b.title || 'Untitled Banner'}</h4>
+              <p style="margin: 0 0 16px 0; font-size: 13px; color: #64748b;">Order: ${b.sort_order}</p>
               
               <div style="display: flex; justify-content: space-between; border-top: 1px solid #f1f5f9; padding-top: 12px;">
-                <button class="btn-edit" data-id="\${b.id}" style="background: none; border: none; color: #3b82f6; font-weight: 500; cursor: pointer; padding: 4px;">Edit</button>
-                <button class="btn-toggle" data-id="\${b.id}" data-active="\${b.is_active}" style="background: none; border: none; color: \${b.is_active ? '#f59e0b' : '#10b981'}; font-weight: 500; cursor: pointer; padding: 4px;">
-                  \${b.is_active ? 'Disable' : 'Enable'}
+                <button class="btn-edit" data-id="${b.id}" style="background: none; border: none; color: #3b82f6; font-weight: 500; cursor: pointer; padding: 4px;">Edit</button>
+                <button class="btn-toggle" data-id="${b.id}" data-active="${b.is_active}" style="background: none; border: none; color: ${b.is_active ? '#f59e0b' : '#10b981'}; font-weight: 500; cursor: pointer; padding: 4px;">
+                  ${b.is_active ? 'Disable' : 'Enable'}
                 </button>
-                <button class="btn-delete" data-id="\${b.id}" style="background: none; border: none; color: #ef4444; font-weight: 500; cursor: pointer; padding: 4px;">Delete</button>
+                <button class="btn-delete" data-id="${b.id}" style="background: none; border: none; color: #ef4444; font-weight: 500; cursor: pointer; padding: 4px;">Delete</button>
               </div>
             </div>
-          \`;
+          `;
           grid.appendChild(card);
         });
         
@@ -142,10 +142,10 @@ export function renderOwnerBannersView(container) {
           btn.addEventListener('click', async () => {
             const id = btn.dataset.id;
             const currentActive = btn.dataset.active === 'true';
-            if (confirm(\`Are you sure you want to \${currentActive ? 'disable' : 'enable'} this banner?\`)) {
+            if (confirm(`Are you sure you want to ${currentActive ? 'disable' : 'enable'} this banner?`)) {
               try {
                 btn.textContent = '...';
-                await api.patch(\`/hotel-admin/banners/\${id}/status\`, { is_active: !currentActive });
+                await api.patch(`/hotel-admin/banners/${id}/status`, { is_active: !currentActive });
                 window.showToast('Banner status updated', 'success');
                 loadBanners();
               } catch (e) {
@@ -161,7 +161,7 @@ export function renderOwnerBannersView(container) {
             if (confirm('Are you sure you want to delete this banner permanently?')) {
               try {
                 btn.textContent = '...';
-                await api.delete(\`/hotel-admin/banners/\${btn.dataset.id}\`);
+                await api.delete(`/hotel-admin/banners/${btn.dataset.id}`);
                 window.showToast('Banner deleted successfully', 'success');
                 loadBanners();
               } catch (e) {
@@ -217,7 +217,7 @@ export function renderOwnerBannersView(container) {
 
     try {
       if (id) {
-        await api.put(\`/hotel-admin/banners/\${id}\`, payload);
+        await api.put(`/hotel-admin/banners/${id}`, payload);
         window.showToast('Banner updated', 'success');
       } else {
         await api.post('/hotel-admin/banners', payload);
