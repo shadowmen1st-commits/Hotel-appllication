@@ -44,6 +44,7 @@ export default function HomeScreen({ navigation }) {
 
   const [foodItems, setFoodItems] = useState([]);
   const [foodLoading, setFoodLoading] = useState(false);
+  const [foodError, setFoodError] = useState(null);
   const [selectedFood, setSelectedFood] = useState(null);
   const [isFoodModalVisible, setFoodModalVisible] = useState(false);
 
@@ -82,13 +83,14 @@ export default function HomeScreen({ navigation }) {
   async function fetchFoodItems() {
     try {
       setFoodLoading(true);
-      const res = await fetch('http://localhost:3000/api/food');
-      const data = await res.json();
+      setFoodError(null);
+      const data = await mobileApi.getFoodItems();
       if (data && data.success) {
-        setFoodItems(data.data);
+        setFoodItems(data.data || data.foods || []);
       }
     } catch (err) {
       console.error('[HOME] Error fetching food:', err.message);
+      setFoodError(err.message);
     } finally {
       setFoodLoading(false);
     }
@@ -97,8 +99,7 @@ export default function HomeScreen({ navigation }) {
   async function fetchBanners() {
     try {
       setBannersLoading(true);
-      const res = await fetch('http://localhost:3000/api/banners');
-      const data = await res.json();
+      const data = await mobileApi.getBanners();
       if (data && data.success && data.banners) {
         setBanners(data.banners);
       }
@@ -294,30 +295,38 @@ export default function HomeScreen({ navigation }) {
             />
 
             {/* Food & Dining Section */}
-            {foodItems.length > 0 && (
-              <View style={{ marginTop: 24 }}>
-                <View style={styles.sectionHeader}>
-                  <View>
-                    <Text style={styles.sectionTitle}>Food & Dining</Text>
-                    <Text style={{ color: '#64748b', fontSize: 13, marginTop: 4 }}>Delicious food at your stay</Text>
-                  </View>
+            <View style={{ marginTop: 24 }}>
+              <View style={styles.sectionHeader}>
+                <View>
+                  <Text style={styles.sectionTitle}>Food & Dining</Text>
+                  <Text style={{ color: '#64748b', fontSize: 13, marginTop: 4 }}>Delicious food at your stay</Text>
                 </View>
-                {foodLoading ? (
-                  <ActivityIndicator color="#8F1239" size="large" style={{ marginTop: 20 }} />
-                ) : (
-                  <FlatList
-                    data={foodItems}
-                    keyExtractor={item => item._id || Math.random().toString()}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ paddingHorizontal: 20 }}
-                    renderItem={({ item }) => (
-                      <FoodCard item={item} onPress={handleFoodPress} />
-                    )}
-                  />
-                )}
               </View>
-            )}
+              
+              {foodLoading ? (
+                <View style={{ padding: 20, alignItems: 'center' }}>
+                  <ActivityIndicator color="#8F1239" size="large" />
+                  <Text style={{ marginTop: 10, color: '#64748b' }}>Loading Food...</Text>
+                </View>
+              ) : foodError || foodItems.length === 0 ? (
+                <View style={{ padding: 20, alignItems: 'center', backgroundColor: '#f8fafc', marginHorizontal: 20, borderRadius: 16 }}>
+                  <Text style={{ color: '#475569', fontSize: 14, fontWeight: '500' }}>
+                    Food & Dining is currently unavailable
+                  </Text>
+                </View>
+              ) : (
+                <FlatList
+                  data={foodItems}
+                  keyExtractor={item => item._id || Math.random().toString()}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ paddingHorizontal: 20 }}
+                  renderItem={({ item }) => (
+                    <FoodCard item={item} onPress={handleFoodPress} />
+                  )}
+                />
+              )}
+            </View>
 
             {/* Featured Hotels section */}
             <View style={[styles.sectionHeader, { marginTop: 24 }]}>

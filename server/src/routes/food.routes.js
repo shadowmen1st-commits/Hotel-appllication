@@ -1,6 +1,6 @@
 import express from 'express';
 import FoodItem from '../models/FoodItem.js';
-import Hotel from '../models/Hotel.js';
+import { Hotel } from '../models/Hotel.js';
 import { protect, restrictTo } from '../middleware/auth.js';
 
 const router = express.Router();
