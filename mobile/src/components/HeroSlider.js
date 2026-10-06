@@ -69,60 +69,10 @@ export default function HeroSlider({ data, navigation, loading }) {
   }
 
   const renderItem = ({ item }) => {
-    const rating = item.rating || 0;
-    const reviewCount = item.reviewsCount || item.reviews_count || 0;
-    const price = item.pricePerNight || item.starting_price || 0;
-    const desc = item.description || item.about;
-
     return (
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={() => navigation.navigate('HotelDetails', { hotel: item, hotelId: item._id || item.id })}
-        style={styles.slideContainer}
-        onPressIn={stopAutoSlide}
-        onPressOut={startAutoSlide}
-      >
-        <Image source={{ uri: item.coverImage }} style={styles.image} />
-        
-        {/* Dark Gradient Overlay for readability */}
-        <View style={styles.gradientOverlay} />
-
-        <View style={styles.content}>
-          <View style={styles.topRow}>
-            <View style={styles.locationBadge}>
-              <Text style={styles.locationText}>📍 {item.city || item.location}</Text>
-            </View>
-            {rating > 0 && (
-              <View style={styles.ratingBadge}>
-                <Text style={styles.ratingIcon}>★</Text>
-                <Text style={styles.ratingText}>
-                  {rating} <Text style={styles.reviewCount}>({reviewCount})</Text>
-                </Text>
-              </View>
-            )}
-          </View>
-
-          <View style={styles.mainInfo}>
-            <Text style={styles.title} numberOfLines={1}>{item.name || item.hotel_name}</Text>
-            {desc ? (
-              <Text style={styles.subtitle} numberOfLines={1}>{desc}</Text>
-            ) : null}
-          </View>
-
-          <BlurView intensity={30} tint="light" style={styles.glassmorphismBar}>
-            <View>
-              <Text style={styles.priceLabel}>Starting from</Text>
-              <Text style={styles.priceText}>₹{price} <Text style={styles.perNight}>/ night</Text></Text>
-            </View>
-            <TouchableOpacity 
-              style={styles.ctaButton}
-              onPress={() => navigation.navigate('HotelDetails', { hotel: item, hotelId: item._id || item.id })}
-            >
-              <Text style={styles.ctaText}>View Details</Text>
-            </TouchableOpacity>
-          </BlurView>
-        </View>
-      </TouchableOpacity>
+      <View style={styles.slideContainer}>
+        <Image source={{ uri: item.image_url }} style={styles.image} resizeMode="cover" />
+      </View>
     );
   };
 
@@ -146,16 +96,10 @@ export default function HeroSlider({ data, navigation, loading }) {
         contentContainerStyle={{ paddingHorizontal: 20 }}
       />
       {data.length > 1 && (
-        <View style={styles.pagination}>
-          {data.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.dot,
-                currentIndex === index ? styles.activeDot : styles.inactiveDot,
-              ]}
-            />
-          ))}
+        <View style={styles.paginationContainer}>
+          <Text style={styles.paginationText}>
+            {currentIndex + 1}/{data.length}
+          </Text>
         </View>
       )}
     </View>
@@ -298,24 +242,19 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
   },
-  pagination: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 12,
+  paginationContainer: {
+    position: 'absolute',
+    bottom: 10,
+    right: 25,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
   },
-  dot: {
-    height: 6,
-    borderRadius: 3,
-    marginHorizontal: 4,
-  },
-  activeDot: {
-    width: 20,
-    backgroundColor: '#8F1239',
-  },
-  inactiveDot: {
-    width: 6,
-    backgroundColor: 'rgba(143, 18, 57, 0.3)',
+  paginationText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
   },
 });
 

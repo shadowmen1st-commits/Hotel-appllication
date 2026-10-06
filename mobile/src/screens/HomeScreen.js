@@ -32,8 +32,10 @@ const DEFAULT_DESTINATIONS = [
 
 export default function HomeScreen({ navigation }) {
   const [hotels, setHotels] = useState([]);
+  const [banners, setBanners] = useState([]);
   const [destinations, setDestinations] = useState(DEFAULT_DESTINATIONS);
   const [loading, setLoading] = useState(false);
+  const [bannersLoading, setBannersLoading] = useState(false);
   // Selected search state
   const [selectedCity, setSelectedCity] = useState('New Digha');
   const [destPickerIdx, setDestPickerIdx] = useState(0);
@@ -66,7 +68,23 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     fetchLiveHotels();
+    fetchBanners();
   }, []);
+
+  async function fetchBanners() {
+    try {
+      setBannersLoading(true);
+      const res = await fetch('http://localhost:3000/api/banners');
+      const data = await res.json();
+      if (data && data.success && data.banners) {
+        setBanners(data.banners);
+      }
+    } catch (err) {
+      console.error('[HOME] Error fetching banners:', err.message);
+    } finally {
+      setBannersLoading(false);
+    }
+  }
 
   async function fetchLiveHotels() {
     try {
@@ -173,9 +191,9 @@ export default function HomeScreen({ navigation }) {
 
           {/* Hero Slider */}
           <HeroSlider 
-            data={hotels.filter(h => h.coverImage).slice(0, 5)} 
+            data={banners} 
             navigation={navigation} 
-            loading={loading}
+            loading={bannersLoading}
           />
 
           {/* Search Glass Box */}
