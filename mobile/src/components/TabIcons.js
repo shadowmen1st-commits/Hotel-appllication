@@ -1,56 +1,44 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS } from '../theme/colors';
 
-export function TabIcon({ name, focused, color, size = 22 }) {
-  let glyph = '•';
-  let fontSize = 18;
+export function TabIcon({ name, focused, color, size = 24 }) {
+  let iconName;
 
   if (name === 'Home') {
-    glyph = '🏠';
-    fontSize = 18;
+    iconName = focused ? 'home' : 'home-outline';
   } else if (name === 'Explore') {
-    glyph = '🔍';
-    fontSize = 18;
+    iconName = focused ? 'search' : 'search-outline';
   } else if (name === 'Bookings') {
-    glyph = '📅';
-    fontSize = 18;
+    iconName = focused ? 'calendar' : 'calendar-outline';
   } else if (name === 'Deals') {
-    glyph = '🏷️';
-    fontSize = 18;
+    iconName = focused ? 'pricetag' : 'pricetag-outline';
   } else if (name === 'Profile') {
-    glyph = '👤';
-    fontSize = 18;
+    iconName = focused ? 'person' : 'person-outline';
   }
 
   return (
-    <View style={styles.iconBox}>
-      <Text style={[styles.iconGlyph, { opacity: focused ? 1 : 0.6, fontSize }]}>
-        {glyph}
-      </Text>
-      {focused && <View style={styles.activeDot} />}
+    <View style={[styles.iconContainer, focused && styles.iconContainerActive]}>
+      <Ionicons 
+        name={iconName} 
+        size={size} 
+        color={focused ? '#8F1239' : '#8C9BB0'} 
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  iconBox: {
-    width: 28,
-    height: 30,
+  iconContainer: {
+    width: 44,
+    height: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
+    borderRadius: 16,
+    marginTop: Platform.OS === 'ios' ? 4 : 0,
   },
-  iconGlyph: {
-    textAlign: 'center',
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-  },
-  activeDot: {
-    position: 'absolute',
-    bottom: -2,
-    width: 5,
-    height: 5,
-    backgroundColor: '#D6A72C',
-    borderRadius: 2.5,
+  iconContainerActive: {
+    backgroundColor: 'rgba(143, 18, 57, 0.12)', // Subtle premium maroon background
   },
 });

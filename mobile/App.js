@@ -38,7 +38,7 @@ function MainTabNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: COLORS.burgundyPill || '#7D143D',
+        tabBarActiveTintColor: '#8F1239', // HotelHub brand color
         tabBarInactiveTintColor: '#8C9BB0',
         // Premium Frosted Glass Background using expo-blur
         tabBarBackground: () => (
